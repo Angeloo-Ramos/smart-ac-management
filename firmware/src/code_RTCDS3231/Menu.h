@@ -13,6 +13,8 @@ class Menu {
 
     void ajustarHora();
     void ajustarData();
+
+    void limparMonitor();
 };
 
 #endif

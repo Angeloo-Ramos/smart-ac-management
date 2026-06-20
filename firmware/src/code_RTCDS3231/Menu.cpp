@@ -52,9 +52,7 @@ void Menu::execOpcao(int option) {
       break;
 
     case 4:
-
-      Serial.println("Funcao 'ajustar data' ainda nao implementada.");
-
+      ajustarData();
       break;
 
     default:
@@ -113,6 +111,10 @@ void Menu::ajustarData(){
   int novoMes;
   int novoDia;
 
+  int mesComum[7] = {1, 3, 5, 7, 8, 10, 12};
+  int mesComercial[4] = {4, 6, 9, 11};
+  int fevereiro = 2;
+
   Serial.println();
   Serial.println("===== AJUSTE DE DATA =====");
 
@@ -120,10 +122,37 @@ void Menu::ajustarData(){
   novoMes = lerInteiro("Digite o numero do mes:");
   novoDia = lerInteiro("Digite o numero do dia:");
 
-  if(novoAno % 4 != 0 && novoMes == 2 && novoDia >= 28){
+  if(novoAno < 1960 || novoAno > 2026){
     Serial.println("Valores inválidos.");
-    return;
+  } else if((novoAno % 4 != 0 && novoMes == fevereiro) && (novoDia < 1 || novoDia > 28)){
+    Serial.println("Valores inválidos.");
   }
+
+  for(int i = 0; i < 4; i++){
+    if(novoMes == mesComercial[i] && (novoDia < 1 || novoDia > 30)){
+      Serial.println("Valores inválidos.");
+    }
+  }
+
+  for(int i = 0; i < 7; i++){
+    if(novoMes == mesComum[i] && (novoDia < 1 || novoDia > 31)){
+      Serial.println("Valores inválidos.");
+    }
+  }
+
+  DateTime agora = rtc.now();
+
+  rtc.adjust(DateTime(
+    novoAno,
+    novoMes,
+    novoDia,
+    agora.hour(),
+    agora.minute(),
+    agora.second()
+  ));
+
+  Serial.println();
+  Serial.println("RTC ajustado com sucesso!");
 }
 
 void Menu::ajustarHora(){  //case 3
